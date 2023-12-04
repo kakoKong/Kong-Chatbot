@@ -1,0 +1,4 @@
+SpeechRecognition==3.10.0
+gTTS==2.4.0
+transformers==4.35.2
+tensorflow==2.15.0
