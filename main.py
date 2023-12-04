@@ -3,6 +3,10 @@ import speech_recognition as sr
 from gtts import gTTS
 import os
 import datetime
+import transformers
+
+nlp = transformers.pipeline("conversational", 
+                            model="microsoft/DialoGPT-medium")
 
 class ChatBot():
   def __init__(self, name):
@@ -47,6 +51,12 @@ if __name__ == "__main__":
 
     elif (any(i in ai.text for i in ["thanks", "thank"])):
       res = np.random.choice(["you're welcome!", "anytime", "no problem", "chill", "Nice to meet you!"])
+      exit()
     
+    else:
+      chat = nlp(transformers.Conversation(ai.text), pad_token_id=50256)
+      res = str(chat)
+      print(res)
+      res = res[res.find("assistant: ")+11:].strip()
     print(res)
     ai.text_to_speech(res)
