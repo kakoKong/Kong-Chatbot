@@ -5,9 +5,6 @@ import os
 import datetime
 import transformers
 
-nlp = transformers.pipeline("conversational", 
-                            model="microsoft/DialoGPT-medium")
-
 class ChatBot():
   def __init__(self, name):
     print("----- starting up", name, "------")
@@ -29,7 +26,7 @@ class ChatBot():
   def wake_up(self, text):
     return True if "hello" in text.lower() else False
   
-  def text_to_speech(self, text):
+  def text_to_speech(self, text): 
     print('AI --> ', text)
     speaker = gTTS(text=text, lang="en", slow=False)
     speaker.save("res.mp3")
@@ -41,6 +38,7 @@ class ChatBot():
 
 if __name__ == "__main__":
   ai = ChatBot(name="Dev")
+  nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
   while True:
     ai.speech_to_text()
     if (ai.wake_up(ai.text)):
@@ -50,13 +48,16 @@ if __name__ == "__main__":
       res = ai.action_time()
 
     elif (any(i in ai.text for i in ["thanks", "thank"])):
-      res = np.random.choice(["you're welcome!", "anytime", "no problem", "chill", "Nice to meet you!"])
-      exit()
-    
+        res = np.random.choice(["you're welcome!", "anytime", "no problem", "chill", "Nice to meet you!"])
+        exit()
+
     else:
-      chat = nlp(transformers.Conversation(ai.text), pad_token_id=50256)
-      res = str(chat)
-      print(res)
-      res = res[res.find("assistant: ")+11:].strip()
-    print(res)
+      if ai.text=="ERROR":
+        res="Sorry, come again?"
+    
+      else:
+        chat = nlp(transformers.Conversation(ai.text), pad_token_id=50256)
+        res = str(chat)
+        res = res[res.find("assistant: ")+11:].strip()
+
     ai.text_to_speech(res)
